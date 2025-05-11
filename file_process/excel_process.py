@@ -3,8 +3,6 @@ import math
 import pandas as pd
 
 
-
-
 class Excel_process:
     def __init__(self, file_xls):
         self.df = None
@@ -23,9 +21,9 @@ class Excel_process:
             'func_val': rows[1][1:],
             'var_name': rows[2][0],
             'func_var': f'f({rows[2][0]})',
-            'var_val': [val for val in rows[2][1:] if not math.isnan(val) ],
+            'var_val': [val for val in rows[2][1:] if not math.isnan(val)],
         }
-        res['fuc_var_val'] = [None for _ in range(len( res['var_val'] ))]
+        res['fuc_var_val'] = [None for _ in range(len(res['var_val']))]
         self.conditions = res
         print(res)
         return res
