@@ -1,5 +1,8 @@
+import time
+
 import flet as ft
 
+from data_process.interpolation_process import Interpolation_process
 from file_process.excel_process import Excel_process
 from ui.graph.grapf import Graph
 
@@ -68,6 +71,14 @@ class Interpolation:
             self.graph.set_data('Inter', a)
             self.graph.build_graph()
             self.graph.set_img()
+            b = Interpolation_process(a)
+            b.process_lagrange()
+            time.sleep(1.5)
+            self.graph.set_data('new', b.data)
+            self.graph.build_graph()
+            self.graph.set_img()
+
+
 
 
 
