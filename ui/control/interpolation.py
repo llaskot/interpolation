@@ -5,6 +5,7 @@ import flet as ft
 from data_process.interpolation_process import Interpolation_process
 from file_process.excel_process import Excel_process
 from ui.graph.grapf import Graph
+from ui.popup import Popup
 
 
 class Interpolation:
@@ -15,7 +16,7 @@ class Interpolation:
         self.file_picker = ft.FilePicker()
         self.file_picker.on_result = self.file_picker_result
         self.btn_select_file = ft.IconButton(ft.Icons.FOLDER, on_click=self.pick_file)
-        self.btn_manual_input = ft.IconButton(ft.Icons.KEYBOARD)
+        self.btn_manual_input = ft.IconButton(ft.Icons.KEYBOARD, on_click=self.open_popup)
 
         self.control = ft.Container(
             content=ft.Row(
@@ -63,9 +64,10 @@ class Interpolation:
     def file_picker_result(self, event):
         if event.files:
             selected_file = event.files[0]
-            print(selected_file)
+            # print(selected_file)
             exl = Excel_process(selected_file)
             a = exl.read_xls()
+            # print(a)
             self.output.update_text(f'Data: {a["func_name"]}')
             self.output.set_table(exl.df)
             self.graph.set_data('Inter', a)
@@ -77,6 +79,11 @@ class Interpolation:
             self.graph.set_data('new', b.data)
             self.graph.build_graph()
             self.graph.set_img()
+
+    def open_popup(self, event):
+        print('OPEN POPUP')
+        popup = Popup(self.page)
+        popup.open()
 
 
 
