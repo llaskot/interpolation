@@ -1,8 +1,13 @@
 import flet as ft
+import pandas as pd
+
+from ui.output.output import Output
 
 
 class Popup:
-    def __init__(self, page):
+    def __init__(self, page, output: Output, graph):
+        self.output = output
+        self.graph = graph
         self.x_values: list = []
         self.y_values: list = []
         self.big_x_values: list = []
@@ -30,6 +35,17 @@ class Popup:
                 ft.ElevatedButton('Remove', on_click=self.remove_x)
             ]
         )
+        self.scroll_column = ft.Column(
+            controls=[
+                ft.Text('Given values, minimum 3 pares:'),
+                self.create_fields_column(),
+                self.val_buttons,
+                ft.Text('X to process, minimum 1 value:'),
+                self.create_desired_column(),
+                self.desired_buttons
+            ],
+            scroll=ft.ScrollMode.AUTO
+        )
 
     def get_result(self):
         all_x, all_y = zip(*sorted(zip(self.x_values, self.y_values)))
@@ -48,8 +64,12 @@ class Popup:
         res['fuc_var_val'] = [None for _ in range(len(res['var_val']))]
         return res
 
+    def get_df(self):
+        return pd.DataFrame([['x'] + self.x_values, ['f(x)'] + self.y_values, ['X'] + self.big_x_values])
+
     def add_x(self, event):
         self.x_to_process_append(self.num_to_process)
+        self.scroll_column.scroll_to(offset=-1, duration=300)
         self.desired_fields.update()
         self.num_to_process += 1
 
@@ -60,6 +80,7 @@ class Popup:
 
     def add_row(self, event):
         self.pare_row_append(self.pares)
+        self.scroll_column.scroll_to(offset=-1, duration=300)
         self.values_fields.update()
         self.pares += 1
 
@@ -137,28 +158,17 @@ class Popup:
             content=ft.Row(
                 controls=[
                     ft.Container(
-                        content=ft.Column(
-                            controls=[
-                                ft.Text('Given values, minimum 3 pares:'),
-                                self.create_fields_column(),
-                                self.val_buttons,
-                                ft.Text('X to process, minimum 1 value:'),
-                                self.create_desired_column(),
-                                self.desired_buttons
-                            ],
-                            scroll=ft.ScrollMode.AUTO
-
-                        )
-
-                        ,
+                        content=
+                        self.scroll_column,
                         # width=147 * self.matrix_len,
-                        padding=0
+                        padding=0,
+
                     )
                 ],
                 scroll=ft.ScrollMode.AUTO
             ),
             actions=[ft.TextButton("Confirm and close", on_click=self.close),
-                     ft.TextButton("Cancel and close", )],
+                     ft.TextButton("Cancel and close", on_click=self.cancel)],
             inset_padding=0,  # Убираем стандартные отступы AlertDialog
         )
         self.page.overlay.append(self.dialog)
@@ -170,44 +180,22 @@ class Popup:
         self.big_x_values.clear()
         for row_container in self.values_fields.controls:
             x = row_container.content.controls[1].value
-            self.x_values.append(float(x if x != '' else 0.0))
+            self.x_values.append(float(x) if x not in ('', '.', '-', '-.') else 0.0)
             y = row_container.content.controls[3].value
-            self.y_values.append(float(y) if y != '' else 0.0)
+            self.y_values.append(float(y) if y not in ('', '.', '-', '-.') else 0.0)
         for row_container in self.desired_fields.controls:
             x = row_container.content.controls[1].value
-            self.big_x_values.append(float(x if x != '' else 0.0))
-
-    # def create_matrix(self):
-    #     self.field_names.clear()
-    #     for i in range(self.matrix_len):
-    #
-    #         temp = []
-    #         for j in range(self.matrix_len):
-    #             temp.append(f'{i}X{j + 1}')
-    #         temp.append(f'{i}res')
-    #
-    #         self.field_names.append(temp)
-
-    # def get_field_values(self):
-    #     """
-    #     gets matrix from popup
-    #     :return: [[]]
-    #     """
-    #     self.matrix.clear()
-    #
-    #     for i in range(self.matrix_len):
-    #         res = []
-    #         for name in self.field_names[i]:
-    #             try:
-    #                 res.append(Fraction(self.fields[name].value))
-    #             except ValueError as e:
-    #                 print(e)
-    #             except IndexError as e:
-    #                 print(e)
-    #         self.matrix.append(res)
+            self.big_x_values.append(float(x) if x not in ('', '.', '-', '-.') else 0.0)
 
     def close(self, e):
         self.collect_values(e)
         self.dialog.open = False
         self.page.update()
         self.dialog = None
+        self.page.result = self.get_result()
+        self.graph.set_data(self.page.result, 'f(x)')
+        self.graph.build_graph()
+        self.graph.set_img()
+        self.page.df = self.get_df()
+        self.output.update_text('Data: f(x)')
+        self.output.set_tables(self.page.result)

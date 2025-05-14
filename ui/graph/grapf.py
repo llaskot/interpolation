@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 
 class Graph:
     def __init__(self, name, data=None):
+        self.numeric_name = None
+        self.analytic_name = None
+        self.numeric = None
+        self.analytics = None
         self.img = None
         if data is None:
             data = {'x_name': 'x', 'func_name': 'f(x)', 'x_val': [1, 10],
@@ -23,8 +27,8 @@ class Graph:
         self.y_name = data['func_name']
         self.X = data['var_val']
         self.Y = data['fuc_var_val']
-        self.x_name = data['var_name']
-        self.y_name = data['func_var']
+        self.X_name = data['var_name']
+        self.Y_name = data['func_var']
         self.graph_name = name
         self.dir_path = self.build_dir_path()
         self.save_path = None
@@ -44,14 +48,18 @@ class Graph:
         )
         self.img.update()
 
-    def set_data(self, name, data):
+    def set_data(self, data: dict, name='f(x) + f(x,X)'):
         self.graph_name = name
         self.img.content = None
         self.data = data
         self.x = data['x_val']
         self.y = data['func_val']
-        self.X = data['var_val']
-        self.Y = data['fuc_var_val']
+        self.X = data['var_val'] if 'var_val' in data.keys() else None
+        self.Y = data['fuc_var_val'] if 'fuc_var_val' in data.keys() else None
+        self.analytics = data['analytics_val'] if 'analytics_val' in data.keys() else None
+        self.numeric = data['numeric_val'] if 'numeric_val' in data.keys() else None
+        self.analytic_name = data['analytics_name'] if 'analytics_name' in data.keys() else None
+        self.numeric_name = data['numeric_name'] if 'numeric_name' in data.keys() else None
         # self.build_graph()
         # self.set_img()
 
@@ -82,14 +90,14 @@ class Graph:
         plt.plot(
             self.x,
             self.y,
-            label=f'Graph {self.y_name}',
+            label=f'Graph {self.Y_name}',
             color='#1f77b4',
             marker='o',
             linewidth=6,  # толщина линии
             markersize=20  # размер точек
         )
-        print('self.Y[0] = ', self.Y[0])
-        if self.Y[0]:
+        print('self.Y = ', self.Y)
+        if self.Y and self.Y[0]:
             second_graph = self.merge_data()
             plt.plot(
                 second_graph[0],
@@ -107,6 +115,64 @@ class Graph:
 
         plt.xlabel(self.x_name)
         plt.ylabel(self.y_name)
+        plt.title(self.graph_name)
+        ax.title.set_size(30)
+        plt.legend()
+        plt.legend(fontsize=18)
+        # plt.grid(True)
+        # plt.show()
+        for file in os.listdir(self.dir_path):
+            if file.endswith(".png"):
+                self.img.content = None
+                os.remove(os.path.join(self.dir_path, file))
+        self.build_path()
+        plt.savefig(self.save_path, dpi=300, bbox_inches='tight')
+        plt.close()
+
+    def build_graph_diff(self):
+        plt.figure(facecolor='black', figsize=(20.05, 12))
+        ax = plt.gca()
+        ax.set_facecolor('black')
+        ax.tick_params(colors='white', labelsize=18)
+        ax.spines['bottom'].set_color('white')
+        ax.spines['left'].set_color('white')
+        ax.xaxis.label.set_color('white')
+        ax.yaxis.label.set_color('white')
+        ax.title.set_color('white')
+        ax.xaxis.label.set_size(18)
+        ax.yaxis.label.set_size(18)
+
+        # plt.plot(self.x, self.y, label=f'Graph {self.y_name}', color="blue")
+        # plt.plot(x, y2, label="Вторая строка", color="green")
+
+        plt.plot(
+            self.x,
+            self.analytics,
+            label=f'Graph {self.analytic_name}',
+            color='#1f77b4',
+            marker='o',
+            linewidth=6,  # толщина линии
+            markersize=20  # размер точек
+        )
+        # print('self.Y = ', self.Y)
+        if self.numeric and self.numeric[0]:
+            # second_graph = self.merge_data()
+            plt.plot(
+                self.x,
+                self.numeric,
+                label=f'Graph {self.numeric_name}',
+                color='red',
+                marker='o',
+                linewidth=1,  # толщина линии
+                markersize=10  # размер точек
+            )
+
+        # for xi, yi in zip(self.x, self.y):
+        #     plt.axvline(x=xi, color='blue', linestyle='--', linewidth=0.5)
+        #     plt.axhline(y=yi, color='blue', linestyle='--', linewidth=0.5)  # проекции на оси
+
+        plt.xlabel(self.x_name)
+        plt.ylabel(self.analytic_name)
         plt.title(self.graph_name)
         ax.title.set_size(30)
         plt.legend()

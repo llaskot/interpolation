@@ -26,21 +26,50 @@ class Output:
         self.scroll_column.scroll_to(offset=-1, duration=300)
         self.scroll_column.update()
 
-    def set_table(self, df: pd.DataFrame):
+    def set_tables(self, data: dict):
+        max_len = max(len(data['x_val']), len(data['var_val']))
         table = ft.Row(
             scroll=ft.ScrollMode.AUTO,
             expand=True,
             controls=[
                 ft.DataTable(
-                    columns=[ft.DataColumn(ft.Text(val, selectable=True, no_wrap=True, max_lines=1)) for val in
-                             df.values.tolist()[0]],
+                    columns=[ft.DataColumn(ft.Text(data['x_name']))] + [ft.DataColumn(
+                        ft.Text(data['x_val'][i] if i < len(data['x_val']) else '', selectable=True, no_wrap=True,
+                                max_lines=1)) for i in range(max_len)],
                     rows=[
                         ft.DataRow(
-                            cells=[ft.DataCell(ft.Text(str(cell), selectable=True, no_wrap=True, max_lines=1)) for cell
-                                   in
-                                   row]
+                            cells=[ft.DataCell(ft.Text(ind))] + [ft.DataCell(
+                                ft.Text(str(row[i]) if i < len(row) else '', selectable=True, no_wrap=True,
+                                        max_lines=1)) for i in range(max_len)]
                         )
-                        for row in df.values.tolist()[1:]
+                        for row, ind in ((data['func_val'], data['func_name']), (data['var_val'], data['var_name']),
+                                         (data['fuc_var_val'], data['func_var']))
+                    ],
+                )
+            ])
+        # self.scroll_column.controls.clear()
+        self.scroll_column.controls.append(table)
+        self.scroll_column.update()
+
+    def set_tables_diff(self, data: dict):
+        max_len = len(data['x_val'])
+        table = ft.Row(
+            scroll=ft.ScrollMode.AUTO,
+            expand=True,
+            controls=[
+                ft.DataTable(
+                    columns=[ft.DataColumn(ft.Text(data['x_name']))] + [ft.DataColumn(
+                        ft.Text(data['x_val'][i] if i < len(data['x_val']) else '', selectable=True, no_wrap=True,
+                                max_lines=1)) for i in range(max_len)],
+                    rows=[
+                        ft.DataRow(
+                            cells=[ft.DataCell(ft.Text(ind))] + [ft.DataCell(
+                                ft.Text(str(row[i]) if i < len(row) else '', selectable=True, no_wrap=True,
+                                        max_lines=1)) for i in range(max_len)]
+                        )
+                        for row, ind in ((data['func_val'], data['func_name']),
+                                         (data['analytics_val'], data['analytics_name']),
+                                         (data['numeric_val'], data['numeric_name']))
                     ],
                 )
             ])

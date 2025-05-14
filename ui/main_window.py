@@ -1,5 +1,6 @@
 import flet as ft
 
+from ui.control.differentiation import Differentiation
 from ui.control.interpolation import Interpolation
 from ui.graph.grapf import Graph
 from ui.output.output import Output
@@ -8,11 +9,15 @@ from ui.output.output import Output
 def main(page: ft.Page):
     page.title = "SLAE solutions"
     page.theme_mode = "dark"
+    page.df = None
+    page.result = None
     output = Output()
     graph = Graph('No name')
     graph.build_graph()
     interp = Interpolation(page, output, graph)
-    page.add(interp.file_picker)
+    differ = Differentiation(page, output, graph)
+    # page.add(interp.file_picker)
+    # page.add(differ.file_picker)
 
     res = ft.Container(
         content=ft.Row(
@@ -42,7 +47,7 @@ def main(page: ft.Page):
     control = ft.Container(
         content=ft.Row(
             controls=[
-                interp.control
+                differ.control
             ]
         ),
         bgcolor=ft.Colors.TEAL,
