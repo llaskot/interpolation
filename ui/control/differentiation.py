@@ -13,8 +13,26 @@ class Differentiation(Interpolation):
 
     def get_buttons(self):
         return [
-            ft.ElevatedButton('Interpolation', on_click=self.process_interp),
-            ft.ElevatedButton('Approximation', on_click=self.process_approximation),
+            ft.ElevatedButton('Interpolation', on_click=self.process_interp,
+                              height=30, color="white", width=120,
+                              style=ft.ButtonStyle(
+                                  shape=ft.RoundedRectangleBorder(radius=5),
+                                  bgcolor={
+                                      # ft.ControlState.DISABLED: "#535426",
+                                      ft.ControlState.DEFAULT: "#020561"
+                                  }
+                              )
+                              ),
+            ft.ElevatedButton('Approximation', on_click=self.process_approximation,
+                              height=30, color="white", width=120,
+                              style=ft.ButtonStyle(
+                                  shape=ft.RoundedRectangleBorder(radius=5),
+                                  bgcolor={
+                                      # ft.ControlState.DISABLED: "#535426",
+                                      ft.ControlState.DEFAULT: "#020561"
+                                  }
+                              )
+                              ),
         ]
 
     def file_picker_result(self, event):

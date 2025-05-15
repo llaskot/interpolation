@@ -22,24 +22,27 @@ class Interpolation:
         self.buttons = self.get_buttons()
 
         self.control = ft.Container(
+            expand=True,
             content=ft.Row(
                 controls=[
                     ft.Container(
                         content=ft.Column(
                             controls=[
                                 ft.Container(
+                                    padding=-3,
                                     content=ft.Row(
                                         controls=[
-                                            ft.Text('Select file'),
+                                            ft.Text('Select file        ', size= 20),
                                             self.btn_select_file,
                                         ]
                                     )
                                 ),
 
                                 ft.Container(
+                                    padding=-3,
                                     content=ft.Row(
                                         controls=[
-                                            ft.Text('Manual input'),
+                                            ft.Text('Manual input  ',  size= 20),
                                             self.btn_manual_input,
                                         ]
                                     )
@@ -53,15 +56,39 @@ class Interpolation:
                             controls=self.buttons
                         )
                     )
-                ]
-            )
+                ],
+
+            ),
+            bgcolor="#4a4447",
+            padding=10
+
 
         )
 
     def get_buttons(self):
         return [
-            ft.ElevatedButton('Lagrange', on_click=self.process_lagrange),
-            ft.ElevatedButton('Newton', on_click=self.process_newton),
+            ft.ElevatedButton('Lagrange', on_click=self.process_lagrange,
+                              height=30, color="white", width=120,
+                              style=ft.ButtonStyle(
+                                  shape=ft.RoundedRectangleBorder(radius=5),
+                                  bgcolor={
+                                      # ft.ControlState.DISABLED: "#535426",
+                                      ft.ControlState.DEFAULT: "#136102"
+                                  }
+                              )
+
+                              ),
+            ft.ElevatedButton('Newton', on_click=self.process_newton,
+                              height=30, color="white", width=120,
+                              style=ft.ButtonStyle(
+                                  shape=ft.RoundedRectangleBorder(radius=5),
+                                  bgcolor={
+                                      # ft.ControlState.DISABLED: "#535426",
+                                      ft.ControlState.DEFAULT: "#136102"
+                                  }
+                              )
+
+                              ),
         ]
 
     def process_lagrange(self, event):

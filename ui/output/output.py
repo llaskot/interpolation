@@ -9,6 +9,19 @@ class Output:
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         )
+        self.clear = ft.Button('Clear',
+
+                               height=30, color="white", width=250,
+                               on_click=self.erase_history,
+                               style=ft.ButtonStyle(
+                                   shape=ft.RoundedRectangleBorder(radius=5),
+                                   bgcolor={
+                                       # ft.ControlState.DISABLED: "#535426",
+                                       ft.ControlState.DEFAULT: "#210102"
+                                   }
+                               )
+
+                               )
 
     def update_text(self, *update):
         current_output = []
@@ -75,4 +88,8 @@ class Output:
             ])
         # self.scroll_column.controls.clear()
         self.scroll_column.controls.append(table)
+        self.scroll_column.update()
+
+    def erase_history(self, e):
+        self.scroll_column.controls.clear()
         self.scroll_column.update()
