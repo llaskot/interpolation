@@ -19,6 +19,7 @@ class Interpolation:
         self.btn_select_file = ft.IconButton(ft.Icons.FOLDER, on_click=self.pick_file)
         self.btn_manual_input = ft.IconButton(ft.Icons.KEYBOARD, on_click=self.open_popup)
         self.page.add(self.file_picker)
+        self.buttons = self.get_buttons()
 
         self.control = ft.Container(
             content=ft.Row(
@@ -49,16 +50,19 @@ class Interpolation:
                     ),
                     ft.Container(
                         content=ft.Column(
-                            controls=[
-                                ft.ElevatedButton('Lagrange', on_click=self.process_lagrange),
-                                ft.ElevatedButton('Newton', on_click=self.process_newton),
-                            ]
+                            controls=self.buttons
                         )
                     )
                 ]
             )
 
         )
+
+    def get_buttons(self):
+        return [
+            ft.ElevatedButton('Lagrange', on_click=self.process_lagrange),
+            ft.ElevatedButton('Newton', on_click=self.process_newton),
+        ]
 
     def process_lagrange(self, event):
         interp = Interpolation_process(self.page.result)
