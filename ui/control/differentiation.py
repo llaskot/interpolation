@@ -58,7 +58,6 @@ class Differentiation(Interpolation):
 
     def process_interp(self, event):
         interp = Differentiation_process(self.page.result)
-        # print(interp.data)
         interp.get_interp_differential()
         self.output.update_text(f'Interpolation method')
         self.output.set_tables_diff(self.page.result)

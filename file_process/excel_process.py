@@ -12,9 +12,6 @@ class Excel_process:
 
     def read_xls(self):
         df = pd.read_excel(self.file_xls.path, header=None)
-        print(df)
-        # self.sort_df(df)
-        # self.df = df
         rows = df.values.tolist()
         x = [val for val in rows[0][1:] if not math.isnan(val)]
         y = [val for val in rows[1][1:] if not math.isnan(val)]
@@ -36,7 +33,6 @@ class Excel_process:
 
     def read_xls_diff(self):
         df = pd.read_excel(self.file_xls.path, header=None)
-        print(df)
         # self.sort_df(df)
         # self.df = df
         rows = df.values.tolist()
@@ -56,5 +52,4 @@ class Excel_process:
         }
         res['numeric_val'] = [None for _ in range(len(res['analytics_val']))]
         self.conditions = res
-        print(res)
         return res
